@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::middleware('auth')->namespace('Admin')->group(function() {
+    $d = 'IndexController@';
+    Route::get('admin', $d . 'index')->name('admin.index.index');
+});
