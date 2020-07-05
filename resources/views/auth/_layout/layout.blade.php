@@ -18,24 +18,24 @@
             <!-- Google Font: Source Sans Pro -->
             <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
         </head>
-    <body class="hold-transition login-page">
-        <div class="login-box">
-            <div class="login-logo">
-                <a href="#"><b>Cubes</b>School</a>
+        <body class="hold-transition login-page">
+            <div class="login-box">
+                <div class="login-logo">
+                    <a href="#"><b>@lang('Cubes')</b>@lang('School')</a>
+                </div>
+
+                @yield('content')
+
             </div>
+            <!-- /.login-box -->
 
-            @yield('content')
-
-        </div>
-        <!-- /.login-box -->
-
-        <!-- jQuery -->
-        <script src="{{url('/themes/admin/plugins/jquery/jquery.min.js')}}"></script>
-        <!-- Bootstrap 4 -->
-        <script src="{{url('/themes/admin/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-        <!-- AdminLTE App -->
-        <script src="{{url('/themes/admin/dist/js/adminlte.min.js')}}"></script>
-
-    </body>
+            <!-- jQuery -->
+            <script src="{{url('/themes/admin/plugins/jquery/jquery.min.js')}}"></script>
+            <!-- Bootstrap 4 -->
+            <script src="{{url('/themes/admin/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+            <!-- AdminLTE App -->
+            <script src="{{url('/themes/admin/dist/js/adminlte.min.js')}}"></script>
+            
+        </body>
     </html>
 
