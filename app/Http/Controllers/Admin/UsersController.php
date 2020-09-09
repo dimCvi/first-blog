@@ -3,76 +3,91 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\User;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+
 use Intervention\Image\Facades\Image;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
+
+use App\Http\Controllers\Controller;
+use App\User as Entity;
 
 class UsersController extends Controller
 {
+    protected $namespace = 'admin.users.';
+
     public function index() 
     {
-        //$users = User::get();
-            
-        return view('admin.users.index', [
-            //'users' => $users,
-        ]);
+        return view($this->namespace . 'index');
     }
 
     public function datatable(Request $request)
     {
-        $searchFilter = $request->validate([
-            'name' => ['nullable', 'string', 'max:255'],
-            'email' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string', 'max:255'],
-            'status' => ['nullable', 'numeric', 'in:0,1']
-        ]);
-        
-        $query = User::query();
+        return
+            datatables(Entity::query())
+                ->filter(function ($query) {
+                    $searchFilter = request()->validate([
+                        'name' => ['nullable', 'string', 'max:255'],
+                        'email' => ['nullable', 'string'],
+                        'phone' => ['nullable', 'string', 'max:255'],
+                        'status' => ['nullable', 'boolean'],
+                        'search' => ['nullable', 'array',],
+                        'search.value' => ['nullable', 'string',],
+                    ]);
 
-        if(isset($searchFilter['name'])) {
-            $query->where('users.name', 'LIKE', '%' . $searchFilter['name'] . '%');
-        } 
-        if(isset($searchFilter['email'])) {
-            $query->where('users.email', 'LIKE', '%' . $searchFilter['email'] . '%');
-        } 
-        if(isset($searchFilter['phone'])) {
-            $query->where('users.phone', '>=', $searchFilter['phone']);
-        } 
-        if(isset($searchFilter['status'])) {
-            $query->where('users.status', '=', $searchFilter['status']);
-        } 
+                    if(!empty($searchFilter['search']['value'])) {
+                        $s = ['LIKE', '%' . $searchFilter['search']['value'] . '%'];
+                        $query
+                            ->where(function($q) use($s) {
+                                $q
+                                    ->orWhere('name', ...$s)
+                                    ->orWhere('surname', ...$s)
+                                    ->orWhere('email', ...$s)
+                                    ->orWhere('phone', ...$s)
+                                ;
+                            })
+                        ;
+                    }
+                    
+                    if(!empty($searchFilter['name'])) {
+                        $query->where('name', 'LIKE', '%' . $searchFilter['name'] . '%');
+                    }
 
-        $dataTable = \DataTables::of($query);
+                    if(!empty($searchFilter['email'])) {
+                        $query->where('email', 'LIKE', '%' . $searchFilter['email'] . '%');
+                    }
 
-        $dataTable->editColumn('email', function($users) {
-            return '<a href="mailto:{{$users->email}}">' . e($users->email) . '</a>';
-        })->editColumn('phone', function($users) {
-            return '<a href="tel:{{$users->phone}}">' . e($users->phone) . '</a>';
-        })->editColumn('photo', function($users) {
-            return view('admin.users.partials.photo', ['user' => $users]);
-        })->editColumn('status', function($users) {
-            return view('admin.users.partials.status', ['user' => $users]);
-        })->addColumn('actions', function($users) {
-            return view('admin.users.partials.actions', ['user' => $users]);
-        }); 
+                    if(!empty($searchFilter['phone'])) {
+                        $query->where('phone', '>=', $searchFilter['phone']);
+                    }
 
-        $dataTable->rawColumns(['email', 'phone', 'photo', 'actions', 'status']);
-
-        // $dataTable->filter(function ($query) use ($request){
-
-        // }); 
-
-        return $dataTable->make(true);
+                    if(!is_null($searchFilter['status'])) {
+                        $query->where('status', $searchFilter['status']);
+                    }
+                })
+                ->editColumn('email', function($entity) {
+                    return '<a href="mailto:{{$entity->email}}">' . e($entity->email) . '</a>';
+                })
+                ->editColumn('phone', function($entity) {
+                    return '<a href="tel:{{$entity->phone}}">' . e($entity->phone) . '</a>';
+                })
+                ->editColumn('photo', function($entity) {
+                    return view($this->namespace . 'partials.photo', ['entity' => $entity, 'namespace' => $this->namespace,]);
+                })
+                ->editColumn('status', function($entity) {
+                    return view($this->namespace . 'partials.status', ['entity' => $entity, 'namespace' => $this->namespace,]);
+                })
+                ->addColumn('actions', function($entity) {
+                    return view($this->namespace . 'partials.actions', ['entity' => $entity, 'namespace' => $this->namespace,]);
+                })
+                ->rawColumns(['email', 'phone', 'photo', 'actions', 'status'])
+                ->make(true); 
     }
 
     public function add()
     {
-        return view('admin.users.add', [
-
+        return view($this->namespace . 'add', [
+            'entity' => new Entity(),
+            'namespace' => $this->namespace,
         ]);
     }
 
@@ -86,106 +101,104 @@ class UsersController extends Controller
             'photo' => ['nullable', 'file', 'image', 'max:65000']
         ]);
 
-        $newUser = new User();
+        $entity = new Entity();
 
-        $newUser->password = bcrypt('cubes12345');
+        $entity->password = bcrypt('cubes12345');
 
-        $newUser->status = 1;
+        $entity->status = 1;
 
-        $newUser->fill($formData);
+        $entity->fill($formData);
 
-        $newUser->save();
+        $entity->save();
 
         if($request->hasFile('photo')) {
             $photoFile = $request->file('photo');
 
-            $photoFileName = $newUser->id . '_' . $photoFile->getClientOriginalName();
+            $photoFileName = $entity->id . '_' . $photoFile->getClientOriginalName();
 
             $photoFile->move(
                 public_path('/storage/user_photo/'),
                 $photoFileName
             );
 
-            $newUser->photo = '/storage/user_photo/' . $photoFileName; 
+            $entity->photo = '/storage/user_photo/' . $photoFileName; 
 
-            $newUser->save();
+            $entity->save();
 
-            Image::make(public_path($newUser->photo))->fit(300, 300)->save();
+            Image::make(public_path($entity->photo))->fit(300, 300)->save();
 
         }
 
-        $newUser->save();
+        $entity->save();
 
         session()->flash('system_message', __('New user added successfuly'));
 
-        return redirect()->route('admin.users.index');
-
+        return redirect()->route($this->namespace . 'index');
     }
     
-    public function edit(User $user)
+    public function edit(Entity $entity)
     {
-        if($user->id == auth()->user()->id) {
+        if($entity->id == auth()->user()->id) {
             session()->flash('warning_message', __('You can\'t edit your own profile like this'));
 
-            return redirect()->route('admin.users.index');
+            return redirect()->route($this->namespace . 'index');
         }
 
-        return view('admin.users.edit', [
-            'user' => $user
+        return view($this->namespace . 'edit', [
+            'entity' => $entity,
+            'namespace' => $this->namespace,
         ]);
     }
 
-    public function update(Request $request, User $user)
+    public function update(Request $request, Entity $entity)
     {
-        if($user->id == auth()->user()->id) {
+        if($entity->id == auth()->user()->id) {
             session()->flash('system_message', __('You can\'t edit your own profile like this'));
 
-            return redirect()->route('admin.users.index');
+            return redirect()->route($this->namespace . 'index');
         }
         
         $formData = $request->validate([
-            'name' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($user->id)],
-            'email' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($user->id)],
+            'name' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($entity->id)],
+            'email' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($entity->id)],
+            'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($entity->id)],
             'phone' => ['nullable', 'string', 'min:8'],
             'photo' => ['nullable', 'file', 'image', 'max:65000']
         ]);
 
-        $user->fill($formData);
+        $entity->fill($formData);
 
         if ($request->hasFile('photo')) {
-            $user->deletePhoto();
+            $entity->deletePhoto();
 
             $photoFile = $request->file('photo');
 
-            $photoFileName = $user->id . '_' . $photoFile->getClientOriginalName();
+            $photoFileName = $entity->id . '_' . $photoFile->getClientOriginalName();
 
             $photoFile->move(
                 public_path('/storage/user_photo/'),
                 $photoFileName
             );
 
-            $user->photo = '/storage/user_photo/' . $photoFileName;
+            $entity->photo = '/storage/user_photo/' . $photoFileName;
 
-            Image::make(public_path($user->photo))->fit(300, 300)->save();
+            Image::make(public_path($entity->photo))->fit(300, 300)->save();
         }
 
-        $user->save ($formData);
+        $entity->save($formData);
 
         session()->flash('system_message', __('Account updated successfuly'));
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route($this->namespace . 'index');
     }
-
 
     public function profile() 
     {
-        return view('admin.users.profile');
+        return view($this->namespace . 'profile');
     }
 
     public function updateProfile(Request $request)
     {
-
         $formData = $request->validate([
             'name' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore(auth()->user()->id)],
             'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore(auth()->user()->id)],
@@ -212,18 +225,17 @@ class UsersController extends Controller
             Image::make(public_path(auth()->user()->photo))->fit(300, 300)->save();
         }
 
-        auth()->user()->save ($formData);
-
+        auth()->user()->save($formData);
 
         session()->flash('system_message', __('Account updated successfuly'));
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route($this->namespace . 'index');
     }
 
 
     public function changePasswordForm()
     {
-        return view('admin.users.changepassword');
+        return view($this->namespace . 'changepassword');
     }
 
     public function changePassword(Request $request)
@@ -235,17 +247,13 @@ class UsersController extends Controller
         ]);
 
         if(!(\Hash::check($data['old_password'], auth()->user()->password))){
-
             session()->flash('warning_message', __('Your credentials do not match'));
             return back();
         }
 
         if (strcmp($data['old_password'], $data['password']) == 0) {
-            
-
             session()->flash('warning_message', __('You can\'t have the same password as before'));
             return back();
-
         }
 
         if(($data['password']) == ""){
@@ -262,18 +270,16 @@ class UsersController extends Controller
         Auth::logout();
 
         return redirect()->route('login');
-
     }
 
-    public function ban(User $users)
+    public function ban(Entity $entity)
     {
-        $users ->status = !($users->status);
-
-        $users->save();
+        $entity->update([
+            'status' => ! $entity->status,
+        ]);
 
         return response()->json([
             'system_message' => __('User has been baned')
         ]);
-
     }
 }

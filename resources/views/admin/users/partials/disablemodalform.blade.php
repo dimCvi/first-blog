@@ -20,8 +20,8 @@
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">@lang('Cancel')</button>
                     <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-minus-circle"></i>
-                            @lang('Disable')
+                        <i class="fas fa-minus-circle"></i>
+                        @lang('Disable')
                     </button>
                 </div>
             </div>

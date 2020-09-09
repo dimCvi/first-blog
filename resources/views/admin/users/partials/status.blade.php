@@ -1,7 +1,7 @@
-<span class="@if($user->status == 1) text-success @else text-danger @endif ">
-    @if ($user->status == 1)
-    enabled
+<span class="@if($entity->status) text-success @else text-danger @endif ">
+    @if ($entity->status)
+        @lang('enabled')
     @else
-    disabled
+        @lang('disabled')
     @endif
 </span>
