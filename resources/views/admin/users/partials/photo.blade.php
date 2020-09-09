@@ -1,0 +1,1 @@
+<img src="{{$user->photo}}" style="max-width: 80px;">

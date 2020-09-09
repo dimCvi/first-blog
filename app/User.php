@@ -16,7 +16,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'surname', 'email', 'password', 'phone', 'photo',
     ];
 
     /**
@@ -36,4 +36,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function getFullNameAttribute()
+    {
+        return $this->name . ' ' . $this->surname;
+    }
+
+    public function deletePhoto() 
+    {
+        If (empty($this->photo)) {
+            return $this;
+        }
+
+        $photoFilePath = public_path($this->photo);
+
+        if (!is_file($photoFilePath)) {
+            return $this;
+        }
+        
+        unlink($photoFilePath);
+
+        return $this;
+    }
 }

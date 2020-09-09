@@ -15,6 +15,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <link rel="stylesheet" href="{{url('/themes/admin/plugins/fontawesome-free/css/all.min.css')}}">
         <!-- Theme style -->
         <link rel="stylesheet" href="{{url('/themes/admin/dist/css/adminlte.min.css')}}">
+        <!-- Toastr CSS -->
+        <link rel="stylesheet" href="{{url('/themes/admin/plugins/toastr/toastr.min.css')}}">
+        <!-- DataTables -->
+        <link rel="stylesheet" href="{{'/themes/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.css'}}">
         <!-- Google Font: Source Sans Pro -->
         <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
         @stack('head_links')
@@ -41,6 +45,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <script type="text/javascript" src="{{url('/themes/admin/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <!-- AdminLTE App -->
         <script type="text/javascript" src="{{url('/themes/admin/dist/js/adminlte.min.js')}}"></script>
+        <!--Validation Plugin-->
+        <script type="text/javascript" src="{{url('/themes/admin/plugins/jquery-validation/jquery.validate.min.js')}}"></script>
+        <script type="text/javascript" src="{{url('/themes/admin/plugins/jquery-validation/additional-methods.min.js')}}"></script>
+        <!-- Toastr JS -->
+        <script type="text/javascript" src="{{url('/themes/admin/plugins/toastr/toastr.min.js')}}"></script>
+        <!-- DataTables -->
+        <script type="text/javascript" src="{{url('/themes/admin/plugins/datatables/jquery.dataTables.min.js')}}"></script>
+        <script type="text/javascript" src="{{url('/themes/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js')}}"></script>
+
+
+        <script type="text/javascript">
+            let systemMessage = "{{session()->pull('system_message')}}";
+            let warningMessage = "{{session()->pull('warning_message')}}";
+
+            if(systemMessage) {
+                toastr.success(systemMessage);
+            }
+
+            if(warningMessage) {
+                toastr.error(warningMessage);
+            }
+        </script>
+
+
         @stack('footer_javascript')
     </body>
 </html>

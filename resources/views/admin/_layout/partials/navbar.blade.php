@@ -19,18 +19,18 @@
                 <a href="#" class="dropdown-item">
                     <!-- Message Start -->
                     <div class="media align-items-center">
-                        <img src="{{url('/themes/admin/dist/img/user1-128x128.jpg')}}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                        <img src="{{auth()->user()->photo ?: 'https://picsum.photos/200/300'}}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                         <div class="media-body">
                             <h3 class="dropdown-item-title">
-                                @lang('Brad Diesel')
+                                {{auth()->user()->fullName}}
                             </h3>
                         </div>
                     </div>
                     <!-- Message End -->
                 </a>
                 <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                    <i class="fas fa-user"></i> Your Profile
+                <a href="{{route('admin.users.profile')}}" class="dropdown-item">
+                    <i class="fas fa-user"></i> @lang('Your Profile')
                 </a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="{{ route('logout') }}"
