@@ -9,7 +9,7 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,13 +17,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->group(function() 
-{
+Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->group(function () {
     $c = 'IndexController@';
     
     Route::get('', $c . 'index')->name('index.index');
     
-    Route::prefix('users')->name('users.')->group(function() {
+    Route::prefix('users')->name('users.')->group(function () {
         $c = 'UsersController@';
         
         Route::get('', $c . 'index')->name('index');

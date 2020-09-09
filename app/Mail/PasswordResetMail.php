@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PasswordResetMail extends Mailable
 {
@@ -18,7 +17,9 @@ class PasswordResetMail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param mixed $contactEmail
+     * @param mixed $contactName
+     * @param mixed $message
      */
     public function __construct($contactEmail, $contactName, $message)
     {
@@ -36,8 +37,7 @@ class PasswordResetMail extends Mailable
     {
         $this->from($this->contactEmail, $this->contactName)
                 ->replyTo($this->contactEmail)
-                ->subject('You have new message on contact form')
-                ;
+                ->subject('You have new message on contact form');
 
         return $this->view('auth.emails.contact_form')
             ->with([

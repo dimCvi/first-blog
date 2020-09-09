@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\User as Entity;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-use Intervention\Image\Facades\Image;
-
 use App\Http\Controllers\Controller;
-use App\User as Entity;
+
+use Illuminate\Support\Facades\Auth;
+use Intervention\Image\Facades\Image;
 
 class UsersController extends Controller
 {
     protected $namespace = 'admin.users.';
 
-    public function index() 
+    public function index()
     {
         return view($this->namespace . 'index');
     }
@@ -34,53 +34,51 @@ class UsersController extends Controller
                         'search.value' => ['nullable', 'string',],
                     ]);
 
-                    if(!empty($searchFilter['search']['value'])) {
+                    if (! empty($searchFilter['search']['value'])) {
                         $s = ['LIKE', '%' . $searchFilter['search']['value'] . '%'];
                         $query
-                            ->where(function($q) use($s) {
+                            ->where(function ($q) use ($s) {
                                 $q
                                     ->orWhere('name', ...$s)
                                     ->orWhere('surname', ...$s)
                                     ->orWhere('email', ...$s)
-                                    ->orWhere('phone', ...$s)
-                                ;
-                            })
-                        ;
+                                    ->orWhere('phone', ...$s);
+                            });
                     }
                     
-                    if(!empty($searchFilter['name'])) {
+                    if (! empty($searchFilter['name'])) {
                         $query->where('name', 'LIKE', '%' . $searchFilter['name'] . '%');
                     }
 
-                    if(!empty($searchFilter['email'])) {
+                    if (! empty($searchFilter['email'])) {
                         $query->where('email', 'LIKE', '%' . $searchFilter['email'] . '%');
                     }
 
-                    if(!empty($searchFilter['phone'])) {
+                    if (! empty($searchFilter['phone'])) {
                         $query->where('phone', '>=', $searchFilter['phone']);
                     }
 
-                    if(!is_null($searchFilter['status'])) {
+                    if (! is_null($searchFilter['status'])) {
                         $query->where('status', $searchFilter['status']);
                     }
                 })
-                ->editColumn('email', function($entity) {
+                ->editColumn('email', function ($entity) {
                     return '<a href="mailto:{{$entity->email}}">' . e($entity->email) . '</a>';
                 })
-                ->editColumn('phone', function($entity) {
+                ->editColumn('phone', function ($entity) {
                     return '<a href="tel:{{$entity->phone}}">' . e($entity->phone) . '</a>';
                 })
-                ->editColumn('photo', function($entity) {
+                ->editColumn('photo', function ($entity) {
                     return view($this->namespace . 'partials.photo', ['entity' => $entity, 'namespace' => $this->namespace,]);
                 })
-                ->editColumn('status', function($entity) {
+                ->editColumn('status', function ($entity) {
                     return view($this->namespace . 'partials.status', ['entity' => $entity, 'namespace' => $this->namespace,]);
                 })
-                ->addColumn('actions', function($entity) {
+                ->addColumn('actions', function ($entity) {
                     return view($this->namespace . 'partials.actions', ['entity' => $entity, 'namespace' => $this->namespace,]);
                 })
                 ->rawColumns(['email', 'phone', 'photo', 'actions', 'status'])
-                ->make(true); 
+                ->make(true);
     }
 
     public function add()
@@ -91,14 +89,14 @@ class UsersController extends Controller
         ]);
     }
 
-    public function insert(Request $request) 
+    public function insert(Request $request)
     {
         $formData = $request->validate([
             'email' => ['required', 'string', 'unique:users,email'],
             'name' => ['required', 'string', 'unique:users,name', 'max:255'],
             'surname' => ['required', 'string', 'unique:users,name', 'max:255'],
             'phone' => ['required', 'numeric', 'min:8'],
-            'photo' => ['nullable', 'file', 'image', 'max:65000']
+            'photo' => ['nullable', 'file', 'image', 'max:65000'],
         ]);
 
         $entity = new Entity();
@@ -111,7 +109,7 @@ class UsersController extends Controller
 
         $entity->save();
 
-        if($request->hasFile('photo')) {
+        if ($request->hasFile('photo')) {
             $photoFile = $request->file('photo');
 
             $photoFileName = $entity->id . '_' . $photoFile->getClientOriginalName();
@@ -121,12 +119,11 @@ class UsersController extends Controller
                 $photoFileName
             );
 
-            $entity->photo = '/storage/user_photo/' . $photoFileName; 
+            $entity->photo = '/storage/user_photo/' . $photoFileName;
 
             $entity->save();
 
             Image::make(public_path($entity->photo))->fit(300, 300)->save();
-
         }
 
         $entity->save();
@@ -138,7 +135,7 @@ class UsersController extends Controller
     
     public function edit(Entity $entity)
     {
-        if($entity->id == auth()->user()->id) {
+        if ($entity->id == auth()->user()->id) {
             session()->flash('warning_message', __('You can\'t edit your own profile like this'));
 
             return redirect()->route($this->namespace . 'index');
@@ -152,7 +149,7 @@ class UsersController extends Controller
 
     public function update(Request $request, Entity $entity)
     {
-        if($entity->id == auth()->user()->id) {
+        if ($entity->id == auth()->user()->id) {
             session()->flash('system_message', __('You can\'t edit your own profile like this'));
 
             return redirect()->route($this->namespace . 'index');
@@ -163,7 +160,7 @@ class UsersController extends Controller
             'email' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($entity->id)],
             'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($entity->id)],
             'phone' => ['nullable', 'string', 'min:8'],
-            'photo' => ['nullable', 'file', 'image', 'max:65000']
+            'photo' => ['nullable', 'file', 'image', 'max:65000'],
         ]);
 
         $entity->fill($formData);
@@ -192,7 +189,7 @@ class UsersController extends Controller
         return redirect()->route($this->namespace . 'index');
     }
 
-    public function profile() 
+    public function profile()
     {
         return view($this->namespace . 'profile');
     }
@@ -203,7 +200,7 @@ class UsersController extends Controller
             'name' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore(auth()->user()->id)],
             'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore(auth()->user()->id)],
             'phone' => ['nullable', 'string', 'min:8'],
-            'photo' => ['nullable', 'file', 'image', 'max:65000']
+            'photo' => ['nullable', 'file', 'image', 'max:65000'],
         ]);
 
         auth()->user()->fill($formData);
@@ -241,12 +238,12 @@ class UsersController extends Controller
     public function changePassword(Request $request)
     {
         $data = $request->validate([
-            'old_password'          => ['required', 'min:7',],
-            'password'              => ['required', 'min:7', 'confirmed',],
+            'old_password' => ['required', 'min:7',],
+            'password' => ['required', 'min:7', 'confirmed',],
             'password_confirmation' => ['required', 'min:7',],
         ]);
 
-        if(!(\Hash::check($data['old_password'], auth()->user()->password))){
+        if (! (\Hash::check($data['old_password'], auth()->user()->password))) {
             session()->flash('warning_message', __('Your credentials do not match'));
             return back();
         }
@@ -256,7 +253,7 @@ class UsersController extends Controller
             return back();
         }
 
-        if(($data['password']) == ""){
+        if (($data['password']) == '') {
             session()->flash('warning_message', __('You can\'t leave the field password empty'));
             return back();
         }
@@ -279,7 +276,7 @@ class UsersController extends Controller
         ]);
 
         return response()->json([
-            'system_message' => __('User has been baned')
+            'system_message' => __('User has been baned'),
         ]);
     }
 }

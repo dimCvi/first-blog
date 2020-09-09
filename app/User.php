@@ -41,15 +41,15 @@ class User extends Authenticatable
         return $this->name . ' ' . $this->surname;
     }
 
-    public function deletePhoto() 
+    public function deletePhoto()
     {
-        If (empty($this->photo)) {
+        if (empty($this->photo)) {
             return $this;
         }
 
         $photoFilePath = public_path($this->photo);
 
-        if (!is_file($photoFilePath)) {
+        if (! is_file($photoFilePath)) {
             return $this;
         }
         
