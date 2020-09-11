@@ -37,4 +37,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->
         Route::post('change-password', $c . 'changePassword')->name('change_password');
         Route::post('ban/{entity}', $c . 'ban')->name('ban');
     });
+
+    Route::prefix('posts')->name('posts.')->group(function () {
+        $c = 'PostController@';
+        
+        Route::get('', $c . 'index')->name('index');
+        Route::post('datatable', $c . 'datatable')->name('datatable');
+        Route::get('add', $c . 'add')->name('add');
+        Route::post('add', $c . 'insert')->name('insert');
+        Route::get('edit/{entity}', $c . 'edit')->name('edit');
+        Route::post('edit/{entity}', $c . 'update')->name('update');
+        Route::post('ban/{entity}', $c . 'ban')->name('ban');
+        Route::post('change-featured/{entity}', $c . 'changeFeatured')->name('change_featured');
+    });
 });
