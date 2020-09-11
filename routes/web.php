@@ -50,4 +50,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->
         Route::post('ban/{entity}', $c . 'ban')->name('ban');
         Route::post('change-featured/{entity}', $c . 'changeFeatured')->name('change_featured');
     });
+    
+    Route::prefix('categories')->name('categories.')->group(function () {
+        $c = 'CategoriesController@';
+        
+        Route::get('', $c . 'index')->name('index');
+        Route::post('datatable', $c . 'datatable')->name('datatable');
+        Route::get('add', $c . 'add')->name('add');
+        Route::post('add', $c . 'insert')->name('insert');
+        Route::get('edit/{entity}', $c . 'edit')->name('edit');
+        Route::post('edit/{entity}', $c . 'update')->name('update');
+        Route::post('delete/{entity}', $c . 'delete')->name('delete');
+        Route::post('changepriority/{entity}', $c . 'changepriority')->name('changepriority');
+    });
 });
