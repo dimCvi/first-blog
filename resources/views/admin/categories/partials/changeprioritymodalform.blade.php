@@ -4,7 +4,7 @@
         id="priority-modal"
     >
         @csrf
-        <input type="text" name="id" value="">
+        <input type="hidden" name="id" value="">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
