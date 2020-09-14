@@ -41,6 +41,24 @@
                                 <p>@lang('Posts')</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.categories.index')}}" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>@lang('Categories')</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.sliders.index')}}" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>@lang('Sliders')</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.tags.index')}}" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>@lang('Tags')</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
