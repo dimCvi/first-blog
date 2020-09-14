@@ -104,38 +104,12 @@ class CategoriesController extends Controller
 
     public function update(Request $request, Entity $entity)
     {
-        if ($entity->id == auth()->user()->id) {
-            session()->flash('system_message', __('You can\'t edit your own profile like this'));
-
-            return redirect()->route($this->namespace . 'index');
-        }
-        
         $formData = $request->validate([
-            'name' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($entity->id)],
-            'email' => ['nullable', 'string', 'max:255', Rule::unique('users')->ignore($entity->id)],
-            'surname' => ['nullable', 'string', 'max:70', Rule::unique('users')->ignore($entity->id)],
-            'phone' => ['nullable', 'string', 'min:8'],
-            'photo' => ['nullable', 'file', 'image', 'max:65000'],
+            'header' => ['nullable', 'string'],
+            'description' => ['nullable', 'string']
         ]);
 
         $entity->fill($formData);
-
-        if ($request->hasFile('photo')) {
-            $entity->deletePhoto();
-
-            $photoFile = $request->file('photo');
-
-            $photoFileName = $entity->id . '_' . $photoFile->getClientOriginalName();
-
-            $photoFile->move(
-                public_path('/storage/category_photo/'),
-                $photoFileName
-            );
-
-            $entity->photo = '/storage/category_photo/' . $photoFileName;
-
-            Image::make(public_path($entity->photo))->fit(300, 300)->save();
-        }
 
         $entity->save($formData);
 
