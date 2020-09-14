@@ -107,64 +107,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php /*
-                                        @foreach ($users as $user)
-                                        <tr>
-                                            <td>{{$user->id}}</td>
-                                            <td class="text-center">
-                                                <span class="@if($user->status == 1) text-success @else text-danger @endif ">
-                                                    @if ($user->status == 1)
-                                                        enabled
-                                                    @else
-                                                        disabled
-                                                    @endif
-                                                </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <img src="{{$user->photo}}" style="max-width: 80px;">
-                                            </td>
-                                            <td>
-                                                <a href="mailto:{{$user->email}}">
-                                                    {{$user->email}}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <strong>{{$user->name}}</strong>
-                                            </td>
-                                            <td>
-                                                <strong>{{$user->surname}}</strong>
-                                            </td>
-                                            <td>
-                                                <a href="tel:{{$user->phone}}">
-                                                    {{$user->phone}}
-                                                </a>
-                                            </td>
-                                            <td class="text-center">{{$user->created_at}}</td>
-                                            <td class="text-center">
-                                                <div class="btn-group">
-                                                    @if ($user->id != auth()->user()->id)
-                                                        <a href="{{route('admin.users.edit', ['user' => $user->id])}}" class="btn btn-info">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                    @endif
-                                                    <button 
-                                                        type="button" 
-                                                        class="btn btn-info" 
-                                                        data-toggle="modal"
-                                                        data-target="#disable-modal"
-                                                        
-                                                        data-action="ban"
-                                                        data-route="{{route('admin.users.ban', ['user' => $user->id])}}"
-                                                        data-id="{{$user->id}}"
-                                                        data-name="{{$user->name}}"
-                                                    >
-                                                        <i class="fas fa-minus-circle"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        */?>
+                                        
                                     </tbody>
                                 </table>
                             </div>
@@ -230,7 +173,7 @@
                     dtData["status"] = $('#entities-filter-form [name="status"]').val();
                 }
             },
-            "order": [[6, 'DESC']],
+            "order": [[7, 'DESC']],
             "columns": [
                 {"name": "id", "data": "id", "className": "text-center"},
                 {"name": "status", "data": "status", "className": "text-center"},
