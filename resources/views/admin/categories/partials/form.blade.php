@@ -21,7 +21,7 @@
                         name="description" 
                         class="form-control @if($errors->has('description')) is-invalid @endif"
                         placeholder="Enter Description"
-                        >{!!old('text', $entity->text)!!}</textarea>
+                        >{!!old('description', $entity->description)!!}</textarea>
                     @include('admin._layout.partials.form_errors', ['fieldName' => 'description'])
                 </div>
             </div>
