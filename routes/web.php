@@ -63,4 +63,17 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->
         Route::post('delete/{entity}', $c . 'delete')->name('delete');
         Route::post('changepriority/{entity}', $c . 'changepriority')->name('changepriority');
     });
+    Route::prefix('sliders')->name('sliders.')->group(function () {
+        $c = 'SliderController@';
+        
+        Route::get('', $c . 'index')->name('index');
+        Route::post('datatable', $c . 'datatable')->name('datatable');
+        Route::get('add', $c . 'add')->name('add');
+        Route::post('add', $c . 'insert')->name('insert');
+        Route::get('edit/{entity}', $c . 'edit')->name('edit');
+        Route::post('edit/{entity}', $c . 'update')->name('update');
+        Route::post('delete/{entity}', $c . 'delete')->name('delete');
+        Route::post('changestatus/{entity}', $c . 'changestatus')->name('changestatus');
+    });
+    
 });
