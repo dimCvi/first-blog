@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Post as Entity;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-
+use App\Models\Tag;
 use App\Http\Controllers\Controller;
-
+use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
@@ -114,6 +113,8 @@ class PostController extends Controller
     public function add()
     {
         return view($this->namespace . 'add', [
+            'categories' => Category::get(),
+            'tags' => Tag::get(),
             'entity' => new Entity(),
             'namespace' => $this->namespace,
         ]);
@@ -126,6 +127,8 @@ class PostController extends Controller
             'title' => ['required', 'string'],
             'text' => ['required', 'string', 'max:255'],
             'photo' => ['nullable', 'file', 'image', 'max:65000'],
+            'category' => ['nullable', 'integer', 'exists:categories,id'],
+            'tags' => ['nullable', 'array', 'exists:tags,id'],
         ]);
 
         $formData['user_id'] = auth()->user()->id; 
@@ -155,6 +158,10 @@ class PostController extends Controller
             Image::make(public_path($entity->photo))->fit(300, 300)->save();
         }
 
+        $entity->categories()->attach($formData['category']);
+
+        $entity->tags()->sync($formData['tags']);
+
         $entity->save();
 
         session()->flash('system_message', __('New post added successfuly'));
@@ -165,6 +172,8 @@ class PostController extends Controller
     public function edit(Entity $entity)
     {
         return view($this->namespace . 'edit', [
+            'categories' => Category::get(),
+            'tags' => Tag::get(),
             'entity' => $entity,
             'namespace' => $this->namespace,
         ]);
@@ -176,11 +185,19 @@ class PostController extends Controller
             'title' => ['nullable', 'string', 'max:70'],
             'text' => ['nullable', 'string', 'max:255'],
             'photo' => ['nullable', 'file', 'image', 'max:65000'],
+            'category' => ['nullable', 'integer', 'exists:categories,id'],
+            'tags' => ['nullable', 'array', 'exists:tags,id'],
         ]);
 
         $formData['user_id'] = auth()->user()->id; 
 
         $entity->fill($formData);
+
+        $entity->categories()->detach();
+
+        $entity->categories()->attach($formData['category']);
+
+        $entity->tags()->sync($formData['tags']);
 
         if ($request->hasFile('photo')) {
             $entity->deletePhoto();
