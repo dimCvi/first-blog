@@ -12,6 +12,14 @@ class Tag extends Model
         'name',
     ];
 
+    public function posts() {
+        return $this->hasMany(
+            Post::class,
+            'post_tags',
+            'id'
+        );
+    }
+
    
     public function deletePhoto()
     {
