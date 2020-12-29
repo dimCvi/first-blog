@@ -18,8 +18,8 @@ class PostTagsSeeder extends Seeder
         $tagIds = DB::table('tags')->get()->pluck('id');
         
         foreach ($postIds as $postId) {
-            $randomCateogyIds = $tagIds->random(5);
-            foreach ($randomCateogyIds as $tagId) {
+            $randomTagIds = $tagIds->random(5);
+            foreach ($randomTagIds as $tagId) {
                 DB::table('post_tags')->insert([
                     'post_id' => $postId,
                     'tag_id' => $tagId,

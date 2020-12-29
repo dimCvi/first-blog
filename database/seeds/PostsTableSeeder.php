@@ -23,7 +23,6 @@ class PostsTableSeeder extends Seeder
                 'featured' => $faker->boolean(),
                 'status' => $faker->boolean(),
                 'views' => $faker->randomFloat(0, 100, 10000),
-                'comments' => $faker->randomFloat(0, 100, 10000),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);

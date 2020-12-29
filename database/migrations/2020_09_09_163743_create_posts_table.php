@@ -21,7 +21,6 @@ class CreatePostsTable extends Migration
             $table->string('text');
             $table->unsignedBigInteger('user_id');
             $table->string('views')->nullable();
-            $table->string('comments')->nullable();
             $table->string('photo')->nullable();
             $table->timestamps();
         });

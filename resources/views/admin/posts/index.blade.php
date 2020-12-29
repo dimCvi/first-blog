@@ -146,6 +146,7 @@
                     dtData["text"] = $('#entities-filter-form [name="text"]').val();
                     dtData["author"] = $('#entities-filter-form [name="author"]').val();
                     dtData["status"] = $('#entities-filter-form [name="status"]').val();
+                    dtData["comments"] = $('#entities-filter-form [name="comments"]').val();
                     dtData["featured"] = $('#entities-filter-form [name="featured"]').val();
                 }
             },
@@ -158,7 +159,7 @@
                 {"name": "title", "data": "title"},
                 {"name": "author", "data": "author", "orderable": false},
                 {"name": "views", "data": "views"},
-                {"name": "comments", "data": "comments", "className": "text-center"},
+                {"name": "comments", "data": "comments", "className": "text-center", "orderable": false},
                 {"name": "created_at", "data": "created_at", "searchable": false, "className": "text-center"},
                 {"name": "actions", "data": "actions", "orderable": false, "searchable": false, "className": "text-center"},
             ]

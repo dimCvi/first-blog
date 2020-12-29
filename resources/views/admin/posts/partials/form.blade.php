@@ -1,3 +1,9 @@
+@push('head_links')
+     <!-- Select2 -->
+    <link rel="stylesheet" href="{{url('/themes/admin/plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{url('/themes/admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+@endpush
+
 <!-- form start -->
 <form id="main-form" method="POST" enctype="multipart/form-data">
     @csrf
@@ -16,13 +22,43 @@
                     @include('admin._layout.partials.form_errors', ['fieldName' => 'title'])
                 </div>
                 <div class="form-group">
-                    <label>Post Category</label>
-                    <select class="form-control">
+                    <label>@lang('Post Category')</label>
+                    <select id="select2bs4" class="form-control" name="category">
                         <option value="">-- Choose Category --</option>
-                        <option value="">Category 1</option>
-                        <option value="">Category 2</option>
-                        <option value="">Category 3</option>
-                        <option value="">Category 4</option>
+                        @foreach ($categories as $category)
+                            <option 
+                                @if (optional($entity->categories->first())->id == $category->id)
+                                    selected
+                                @endif
+                                value="{{$category->id}}"
+                            >
+                                {{$category->header}}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>@lang('Post Tags')</label>
+                    <select 
+                        id="multipleselect2" 
+                        class="form-control"
+                        multiple 
+                        name="tags[]"
+                    >
+                        <option value="">-- Choose Tags --</option>
+                        @foreach ($tags as $tag)
+                            <option 
+                                @if (
+                                    is_array(old('tags', $entity->tags->pluck('id')->toArray())) 
+                                    && in_array($tag->id, old('tags', $entity->tags->pluck('id')->toArray()))
+                                    )
+                                        selected
+                                @endif
+                                value="{{$tag->id}}"
+                            >
+                                {{$tag->name}}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
                 <div class="form-group">
@@ -57,7 +93,7 @@
                                 </button>
                             </div>
                             <div class="text-center">
-                                <img src="{{ $entity->photo . '?t=' . time() }}" alt="" class="img-fluid">
+                                <img src="{{ $entity->photo . '?t=' . time() }}" alt="Nema" class="img-fluid">
                             </div>
                         </div>
                     </div>
@@ -76,34 +112,46 @@
 </form>
 
 @push('footer_javascript')
+<!-- CKeditor4 -->
 <script src="{{url('/themes/admin/plugins/ckeditor_4.15.0_full/ckeditor/ckeditor.js')}}"></script>
 <script src="{{url('/themes/admin/plugins/ckeditor_4.15.0_full/ckeditor/adapters/jquery.js')}}"></script>
+<!-- Select2 -->
+<script src="{{url('/themes/admin/plugins/select2/js/select2.full.min.js')}}"></script>
 <script>
     $('#main-form [name="text"]').ckeditor({
         "height": "300px",
         "allowedContent": true,
-    })
-        console.log("$('#main-form')");
-        console.log($('#main-form'));
+    });
+
+    $('#select2bs4').select2({
+      theme: 'bootstrap4'
+    });
+   
+    $('#multipleselect2').select2({
+      theme: 'bootstrap4'
+    });
         $('#main-form').validate({
             rules: {
-                "name": {
+                "title": {
                     "required": false,
                     "maxlength": 70
                 },
-                "email": {
+                "text": {
                     "required": false
                 },
                 "surname": {
                     "required": false,
                     "maxlength": 70
                 },
-                "phone": {
-                    "required": false
-                },
                 "photo": {
                     "required": false,
                     "maxlength": 65000
+                },
+                "category": {
+                    "required": false,
+                },
+                "tags": {
+                    "required": false,
                 }
             },
             errorElement: 'span',

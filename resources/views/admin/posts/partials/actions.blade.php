@@ -3,6 +3,10 @@
         <i class="fas fa-edit"></i>
     </a>
 
+    <a href="{{route('admin.comments.index', ['entity' => $entity->id])}}" class="btn btn-info">
+        <i class="fa fa-comment"></i>
+    </a>
+
     @if ($entity->status)
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#disable-modal" data-action="ban"
             data-route="{{route($namespace . 'ban', ['entity' => $entity->id])}}" data-id="{{$entity->id}}"

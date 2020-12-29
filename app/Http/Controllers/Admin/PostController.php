@@ -88,9 +88,6 @@ class PostController extends Controller
                 ->editColumn('views', function ($entity) {
                     return $entity->views ?? 0;
                 })
-                ->editColumn('comments', function ($entity) {
-                    return $entity->comments ?? 0;
-                })
                 ->editColumn('photo', function ($entity) {
                     return view($this->namespace . 'partials.photo', ['entity' => $entity, 'namespace' => $this->namespace,]);
                 })
@@ -106,7 +103,10 @@ class PostController extends Controller
                 ->addColumn('actions', function ($entity) {
                     return view($this->namespace . 'partials.actions', ['entity' => $entity, 'namespace' => $this->namespace,]);
                 })
-                ->rawColumns(['author', 'featured', 'photo', 'actions', 'status'])
+                ->editColumn('comments', function($entity){
+                    return view($this->namespace . 'partials.numberofcomments', ['entity' => $entity, 'namespace' => $this->namespace,]);
+                }) 
+                ->rawColumns(['author', 'featured', 'photo', 'actions', 'status', 'comments'])
                 ->make(true);
     }
 

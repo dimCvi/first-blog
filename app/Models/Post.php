@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\User;
 use App\Models\Category;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -24,6 +25,14 @@ class Post extends Model
     public function author() 
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function comments() 
+    {
+        return $this->hasMany(
+            Comment::class,
+            'post_id'
+        );
     }
 
     public function categories() 
