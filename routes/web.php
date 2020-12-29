@@ -87,4 +87,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->namespace('Admin')->
         Route::post('delete/{entity}', $c . 'delete')->name('delete');
         Route::post('changestatus/{entity}', $c . 'changestatus')->name('changestatus');
     });
+    Route::prefix('comments')->name('comments.')->group(function () {
+        $c = 'CommentController@';
+
+        Route::get('', $c . 'index')->name('index');
+        Route::post('datatable', $c . 'datatable')->name('datatable');
+        Route::post('delete/{entity}', $c . 'delete')->name('delete');
+        Route::post('change-status/{entity}', $c . 'changeStatus')->name('change_status');
+    });
 });

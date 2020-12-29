@@ -59,6 +59,12 @@
                                 <p>@lang('Tags')</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{route('admin.comments.index')}}" class="nav-link active">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>@lang('Comments')</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">
